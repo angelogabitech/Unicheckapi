@@ -1,16 +1,17 @@
 package com.unicheck.Unicheckapi.model;
 
-
-
+import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
-@Table(name = "professores")
+@DiscriminatorValue("professor")
 @EqualsAndHashCode(callSuper = true)
 public class Professor extends Usuario {
+
     private String departamento;
+
 }
