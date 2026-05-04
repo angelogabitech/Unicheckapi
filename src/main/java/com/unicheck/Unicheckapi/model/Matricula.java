@@ -20,7 +20,11 @@ public class Matricula {
 
     @ManyToOne
     @JoinColumn(name = "aluno_id", nullable = false)
+<<<<<<< HEAD
     private Aluno aluno;
+=======
+    private Usuario aluno;
+>>>>>>> 0fe0c1eff8687d7baa9153ab44cce2e9923c8612
 
     @ManyToOne
     @JoinColumn(name = "disciplina_id", nullable = false)

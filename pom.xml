@@ -29,12 +29,15 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
+<<<<<<< HEAD
 		<!-- VALIDATION -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-validation</artifactId>
 		</dependency>
 
+=======
+>>>>>>> 0fe0c1eff8687d7baa9153ab44cce2e9923c8612
 		<!-- JPA -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -64,6 +67,7 @@
 			<scope>test</scope>
 		</dependency>
 
+<<<<<<< HEAD
 		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
@@ -109,6 +113,8 @@
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
 
+=======
+>>>>>>> 0fe0c1eff8687d7baa9153ab44cce2e9923c8612
 	</dependencies>
 
 	<build>
@@ -132,4 +138,8 @@
 		</plugins>
 	</build>
 
+<<<<<<< HEAD
 </project>
+=======
+</project>
+>>>>>>> 0fe0c1eff8687d7baa9153ab44cce2e9923c8612

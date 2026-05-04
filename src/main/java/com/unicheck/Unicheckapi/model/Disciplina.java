@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
+<<<<<<< HEAD
 @Table(
         name = "disciplinas",
         uniqueConstraints = @UniqueConstraint(
@@ -14,6 +15,9 @@ import java.util.UUID;
                 columnNames = {"professor_id", "turma_id"}
         )
 )
+=======
+@Table(name = "disciplinas")
+>>>>>>> 0fe0c1eff8687d7baa9153ab44cce2e9923c8612
 @Getter
 @Setter
 @NoArgsConstructor
@@ -28,9 +32,14 @@ public class Disciplina {
     @Column(nullable = false)
     private String nome;
 
+<<<<<<< HEAD
     @ManyToOne
     @JoinColumn(name = "turma_id")
     private Turma turma;
+=======
+    @Column(nullable = false, unique = true)
+    private String codigo;
+>>>>>>> 0fe0c1eff8687d7baa9153ab44cce2e9923c8612
 
     @ManyToOne
     @JoinColumn(name = "professor_id")
@@ -38,6 +47,7 @@ public class Disciplina {
 
     private LocalDateTime criado;
 
+<<<<<<< HEAD
     @Column
     private String codigo;
 
@@ -45,6 +55,8 @@ public class Disciplina {
     @Column(nullable = false, columnDefinition = "boolean default true")
     private boolean ativa = true;
 
+=======
+>>>>>>> 0fe0c1eff8687d7baa9153ab44cce2e9923c8612
     private LocalDateTime atualizado;
 
     @PrePersist
@@ -56,4 +68,8 @@ public class Disciplina {
     public void preUpdate() {
         atualizado = LocalDateTime.now();
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 0fe0c1eff8687d7baa9153ab44cce2e9923c8612

@@ -1,5 +1,6 @@
 package com.unicheck.Unicheckapi.Controller;
 
+<<<<<<< HEAD
 import com.unicheck.Unicheckapi.dto.AtualizarPerfilDTO;
 import com.unicheck.Unicheckapi.dto.ProfessorRequestDTO;
 import com.unicheck.Unicheckapi.model.Professor;
@@ -11,6 +12,13 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+=======
+import com.unicheck.Unicheckapi.model.Professor;
+import com.unicheck.Unicheckapi.service.ProfessorService;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+>>>>>>> 0fe0c1eff8687d7baa9153ab44cce2e9923c8612
 
 @RestController
 @RequestMapping("/professores")
@@ -18,20 +26,29 @@ public class ProfessorController {
 
     private final ProfessorService service;
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 0fe0c1eff8687d7baa9153ab44cce2e9923c8612
     public ProfessorController(ProfessorService service) {
         this.service = service;
     }
 
     @PostMapping
+<<<<<<< HEAD
     public ResponseEntity<Professor> criar(@RequestBody ProfessorRequestDTO dto) {
         return ResponseEntity.ok(service.criar(dto));
+=======
+    public Professor criar(@RequestBody Professor professor) {
+        return service.salvar(professor);
+>>>>>>> 0fe0c1eff8687d7baa9153ab44cce2e9923c8612
     }
 
     @GetMapping
     public List<Professor> listar() {
         return service.listar();
     }
+<<<<<<< HEAD
 
     @GetMapping("/{id}")
     public ResponseEntity<Professor> buscarPorId(@PathVariable UUID id) {
@@ -65,3 +82,6 @@ public class ProfessorController {
     }
 
 }
+=======
+}
+>>>>>>> 0fe0c1eff8687d7baa9153ab44cce2e9923c8612

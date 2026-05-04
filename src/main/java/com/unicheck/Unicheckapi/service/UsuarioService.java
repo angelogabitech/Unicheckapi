@@ -18,6 +18,7 @@ public class UsuarioService {
     }
 
     public Usuario salvar(Usuario usuario) {
+<<<<<<< HEAD
 
         if (usuario.getEmail() == null || usuario.getEmail().isBlank()) {
             throw new RuntimeException("Email é obrigatório");
@@ -31,6 +32,8 @@ public class UsuarioService {
             throw new RuntimeException("Senha é obrigatória");
         }
 
+=======
+>>>>>>> 0fe0c1eff8687d7baa9153ab44cce2e9923c8612
         return usuarioRepository.save(usuario);
     }
 
@@ -55,7 +58,10 @@ public class UsuarioService {
         usuario.setSenha(dto.getSenha());
         usuario.setRole(dto.getRole());
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 0fe0c1eff8687d7baa9153ab44cce2e9923c8612
         return usuarioRepository.save(usuario);
     }
 }

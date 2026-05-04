@@ -1,5 +1,6 @@
 package com.unicheck.Unicheckapi.model;
 
+<<<<<<< HEAD
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -30,3 +31,7 @@ public class Turma {
     @Column(nullable = false)
     private String identificacao;
 }
+=======
+public class Turma {
+}
+>>>>>>> 0fe0c1eff8687d7baa9153ab44cce2e9923c8612
