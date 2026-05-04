@@ -1,15 +1,11 @@
 HELP.md
 target/
-.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
-<<<<<<< HEAD
 FaltaApi (2).md 
 alteracoes.md
 .tools
-
-=======
->>>>>>> 0fe0c1eff8687d7baa9153ab44cce2e9923c8612
+.env
 
 ### STS ###
 .apt_generated

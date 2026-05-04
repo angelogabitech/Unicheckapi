@@ -1,0 +1,12 @@
+.git
+.idea
+.tools
+target
+build
+dist
+.env
+*.log
+*.iml
+HELP.md
+alteracoes.md
+FaltaApi (2).md

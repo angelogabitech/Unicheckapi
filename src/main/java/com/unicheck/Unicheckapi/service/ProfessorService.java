@@ -1,6 +1,5 @@
 package com.unicheck.Unicheckapi.service;
 
-<<<<<<< HEAD
 import com.unicheck.Unicheckapi.Exception.ApiException;
 import com.unicheck.Unicheckapi.dto.AtualizarPerfilDTO;
 import com.unicheck.Unicheckapi.dto.ProfessorRequestDTO;
@@ -9,9 +8,6 @@ import com.unicheck.Unicheckapi.model.Professor;
 import com.unicheck.Unicheckapi.repository.DisciplinaRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import com.unicheck.Unicheckapi.model.Role;
-=======
-import com.unicheck.Unicheckapi.model.Professor;
->>>>>>> 0fe0c1eff8687d7baa9153ab44cce2e9923c8612
 import com.unicheck.Unicheckapi.repository.ProfessorRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,7 +21,6 @@ import java.util.UUID;
 public class ProfessorService {
 
     private final ProfessorRepository repository;
-<<<<<<< HEAD
     private final DisciplinaRepository disciplinaRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -34,13 +29,6 @@ public class ProfessorService {
         this.disciplinaRepository = disciplinaRepository;
         this.passwordEncoder = passwordEncoder;
     }
-=======
-
-    public ProfessorService(ProfessorRepository repository) {
-        this.repository = repository;
-    }
-
->>>>>>> 0fe0c1eff8687d7baa9153ab44cce2e9923c8612
     public Professor salvar(Professor professor) {
         return repository.save(professor);
     }
@@ -51,8 +39,7 @@ public class ProfessorService {
 
     public Professor buscarPorId(UUID id) {
         return repository.findById(id)
-<<<<<<< HEAD
-                .orElseThrow(() -> new ApiException("Professor não encontrado"));
+                .orElseThrow(() -> new ApiException("Professor nÃ£o encontrado"));
     }
     public Professor criar(ProfessorRequestDTO dto) {
         Professor professor = new Professor();
@@ -91,11 +78,6 @@ public class ProfessorService {
     public void salvarFoto(UUID id, String fotoBase64) {
         Professor professor = buscarPorId(id);
         professor.setFotoUrl(fotoBase64);
-        repository.save(professor); // ← repository minúsculo, não ProfessorRepository
+        repository.save(professor); // â† repository minÃºsculo, nÃ£o ProfessorRepository
     }
 }
-=======
-                .orElseThrow(() -> new RuntimeException("Professor não encontrado"));
-    }
-}
->>>>>>> 0fe0c1eff8687d7baa9153ab44cce2e9923c8612

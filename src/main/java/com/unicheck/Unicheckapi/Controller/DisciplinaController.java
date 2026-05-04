@@ -1,20 +1,14 @@
 package com.unicheck.Unicheckapi.Controller;
 
-<<<<<<< HEAD
 import com.unicheck.Unicheckapi.dto.DisciplinaBulkRequestDTO;
 import com.unicheck.Unicheckapi.dto.DisciplinaRequestDTO;
-=======
->>>>>>> 0fe0c1eff8687d7baa9153ab44cce2e9923c8612
 import com.unicheck.Unicheckapi.model.Disciplina;
 import com.unicheck.Unicheckapi.service.DisciplinaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-<<<<<<< HEAD
 import java.util.UUID;
-=======
->>>>>>> 0fe0c1eff8687d7baa9153ab44cce2e9923c8612
 
 @RestController
 @RequestMapping("/disciplinas")
@@ -24,7 +18,6 @@ public class DisciplinaController {
     private final DisciplinaService disciplinaService;
 
     @PostMapping
-<<<<<<< HEAD
     public Disciplina criar(@RequestBody DisciplinaRequestDTO dto) {
         return disciplinaService.criar(dto);
     }
@@ -32,17 +25,12 @@ public class DisciplinaController {
     @PostMapping("/bulk")
     public List<Disciplina> criarEmLote(@RequestBody DisciplinaBulkRequestDTO dto) {
         return disciplinaService.criarEmLote(dto);
-=======
-    public Disciplina criar(@RequestBody Disciplina disciplina){
-        return disciplinaService.criar(disciplina);
->>>>>>> 0fe0c1eff8687d7baa9153ab44cce2e9923c8612
     }
 
     @GetMapping
     public List<Disciplina> listar(){
         return disciplinaService.listar();
     }
-<<<<<<< HEAD
 
     @GetMapping("/minhas")
     public List<Disciplina> listarMinhas() {
@@ -74,6 +62,3 @@ public class DisciplinaController {
         return disciplinaService.listarPorProfessorPermitido(professorId);
     }
 }
-=======
-}
->>>>>>> 0fe0c1eff8687d7baa9153ab44cce2e9923c8612
