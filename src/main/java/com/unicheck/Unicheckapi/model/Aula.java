@@ -22,6 +22,10 @@ public class Aula {
     @ManyToOne
     private Disciplina disciplina;
 
+
+    @Column(nullable = false)
+    private String titulo;
+
     private String qrToken;
 
     private LocalDateTime dataHora;

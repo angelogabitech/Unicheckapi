@@ -12,32 +12,27 @@ import java.util.Date;
 @Service
 public class JwtService {
 
-    private final SecretKey key =
-            Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    private final SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
-    // GERAR TOKEN
-    public String gerarToken(String email) {
-
+    // GERAR TOKEN com email e role
+    public String gerarToken(String email, String role) {
         return Jwts.builder()
                 .setSubject(email)
+                .claim("role", role)
                 .setIssuedAt(new Date())
-                .setExpiration(
-                        new Date(System.currentTimeMillis() + 86400000)
-                )
-                .signWith(key)
+                .setExpiration(new Date(System.currentTimeMillis() + 86400000))
+                .signWith(key, SignatureAlgorithm.HS256)  // ← usa "key" diretamente, não getChave()
                 .compact();
     }
 
     // EXTRAIR EMAIL
     public String extrairEmail(String token) {
+        return extrairClaims(token).getSubject();
+    }
 
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-
-        return claims.getSubject();
+    // EXTRAIR ROLE
+    public String extrairRole(String token) {
+        return extrairClaims(token).get("role", String.class);
     }
 
     // VALIDAR TOKEN
@@ -47,10 +42,17 @@ public class JwtService {
                     .setSigningKey(key)
                     .build()
                     .parseClaimsJws(token);
-
             return true;
         } catch (Exception e) {
             return false;
         }
+    }
+
+    private Claims extrairClaims(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 }

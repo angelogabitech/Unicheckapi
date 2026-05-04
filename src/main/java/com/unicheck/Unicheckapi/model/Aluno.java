@@ -1,7 +1,8 @@
 package com.unicheck.Unicheckapi.model;
 
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
+
+
+import jakarta.persistence.*;
 import lombok.*;
 
 @Getter
@@ -13,4 +14,8 @@ import lombok.*;
 public class Aluno extends Usuario {
 
     private String matricula;
+
+    @ManyToOne
+    @JoinColumn(name = "turma_id")
+    private Turma turma;
 }

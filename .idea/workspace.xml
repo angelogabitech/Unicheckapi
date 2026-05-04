@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="76580513-1cbf-4513-bce6-f34e47b777be" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/Controller/AlunoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/Controller/AlunoController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/Controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/Controller/AuthController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/Controller/DisciplinaController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/Controller/DisciplinaController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/Controller/PresencaController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/Controller/PresencaController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/Controller/ProfessorController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/Controller/ProfessorController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/Controller/QrCodeController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/Controller/QrCodeController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/Controller/TestController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/dto/DisciplinaRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/dto/DisciplinaRequestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/model/Aluno.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/model/Aluno.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/model/Aula.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/model/Aula.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/model/Disciplina.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/model/Disciplina.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/model/Matricula.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/model/Matricula.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/model/Presenca.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/model/Presenca.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/model/Professor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/model/Professor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/model/Turma.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/model/Turma.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/model/Usuario.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/model/Usuario.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/repository/AlunoRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/repository/AlunoRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/repository/DisciplinaRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/repository/DisciplinaRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/repository/PresencaRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/repository/PresencaRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/security/JwtAuthenticationFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/security/JwtAuthenticationFilter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/security/SecurityConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/service/AlunoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/service/AlunoService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/service/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/service/AuthService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/service/DisciplinaService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/service/DisciplinaService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/service/JwtService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/service/JwtService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/service/PresencaService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/service/PresencaService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/service/ProfessorService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/service/ProfessorService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/service/QrCodeService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/service/QrCodeService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/unicheck/Unicheckapi/UnicheckapiApplicationTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/unicheck/Unicheckapi/UnicheckapiApplicationTests.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;angelogabitech&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/angelogabitech/Unicheckapi.git&quot;,
+    &quot;accountId&quot;: &quot;5ab85227-3666-4fbe-9d67-d0e0947fc54e&quot;
+  }
+}</component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHomeTypeForPersistence" value="WRAPPER" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 0
+}</component>
+  <component name="ProjectId" id="3BPXr6QdC3wnUeGUBRGdQpac7z6" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.UnicheckapiApplication.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Angelo Gabriel/Desktop/Unicheckapiclaude&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;org.jetbrains.plugins.github.ui.GithubSettingsConfigurable&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Angelo Gabriel\Desktop\Unicheckapiclaude\src\main\java\com\unicheck\Unicheckapi\security" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="Unicheckapiclaude" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <module name="Unicheckapiclaude" />
+      <option name="filePath" />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="76580513-1cbf-4513-bce6-f34e47b777be" name="Changes" comment="" />
+      <created>1774391874994</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1774391874994</updated>
+    </task>
+    <servers />
+  </component>
+</project>

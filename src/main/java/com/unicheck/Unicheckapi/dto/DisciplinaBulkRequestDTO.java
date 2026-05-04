@@ -1,17 +1,15 @@
 package com.unicheck.Unicheckapi.dto;
 
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
+import java.util.List;
 import java.util.UUID;
-//Requisição disciplina
+
 @Data
-public class DisciplinaRequestDTO {
+public class DisciplinaBulkRequestDTO {
 
     private String nome;
     private String codigo;
-    private UUID turmaId;
     private UUID professorId;
-
+    private List<UUID> turmaIds;
 }

@@ -7,8 +7,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -30,7 +30,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String authHeader = request.getHeader("Authorization");
 
-        // sem token → segue
+        // sem token → segue sem autenticar
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
@@ -38,17 +38,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String token = authHeader.substring(7);
 
-        String email = jwtService.extrairEmail(token);
+        if (!jwtService.tokenValido(token)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
-        if (email != null &&
-                SecurityContextHolder.getContext().getAuthentication() == null) {
+        String email = jwtService.extrairEmail(token);
+        String role  = jwtService.extrairRole(token);  // ← lê a role do token
+
+        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+
+            // Spring Security exige o prefixo "ROLE_" para hasRole() funcionar
+            SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + role);
 
             UsernamePasswordAuthenticationToken auth =
-                    new UsernamePasswordAuthenticationToken(
-                            email,
-                            null,
-                            List.of(new SimpleGrantedAuthority("USER"))
-                    );
+                    new UsernamePasswordAuthenticationToken(email, null, List.of(authority));
 
             SecurityContextHolder.getContext().setAuthentication(auth);
         }

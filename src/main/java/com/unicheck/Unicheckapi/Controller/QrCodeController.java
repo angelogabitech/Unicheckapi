@@ -16,13 +16,9 @@ public class QrCodeController {
 
     private final QrCodeService qrCodeService;
 
-    @GetMapping("/disciplina/{id}")
-    public ResponseEntity<byte[]> gerarQRCode(@PathVariable UUID id) throws Exception {
-
-        String conteudo = id.toString();
-
-        byte[] qrCode = qrCodeService.gerarQrCode(conteudo);
-
+    @GetMapping("/aluno/{alunoId}")
+    public ResponseEntity<byte[]> gerarQRCodeAluno(@PathVariable UUID alunoId) throws Exception {
+        byte[] qrCode = qrCodeService.gerarQrCode(alunoId.toString());
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=qrcode.png")
                 .contentType(MediaType.IMAGE_PNG)

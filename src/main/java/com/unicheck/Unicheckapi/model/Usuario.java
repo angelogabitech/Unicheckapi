@@ -5,7 +5,6 @@ import lombok.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -15,13 +14,16 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "tipo_usuario")
 public class Usuario {
+
     @Id
     @GeneratedValue
     private UUID id;
+
 
     @Column(nullable = false)
     private String nome;
@@ -35,14 +37,17 @@ public class Usuario {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @Column(columnDefinition = "TEXT")
     private String fotoUrl;
 
-    private boolean ativo = true;
+    @Builder.Default
+    private boolean ativo = true;         // ← corrigido
 
     private LocalDateTime criado;
     private LocalDateTime atualizado;
 
-    private boolean sincronizado = false;
+    @Builder.Default
+    private boolean sincronizado = false; // ← corrigido
 
     @PrePersist
     public void prePersist() {
@@ -53,12 +58,4 @@ public class Usuario {
     public void preUpdate() {
         atualizado = LocalDateTime.now();
     }
-
-    @ManyToMany
-    @JoinTable(
-            name = "usuario_disciplinas",
-            joinColumns = @JoinColumn(name = "usuario_id"),
-            inverseJoinColumns = @JoinColumn(name = "disciplina_id")
-    )
-    private List<Disciplina> disciplinas;
 }

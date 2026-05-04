@@ -12,6 +12,6 @@ import lombok.*;
 @EqualsAndHashCode(callSuper = true)
 public class Professor extends Usuario {
 
-    private String departamento;
+
 
 }

@@ -52,10 +52,8 @@ public class QrCodeService {
     }
 
     public Matricula validarQrCode(String qrCode) {
-
         String id = qrCode.replace("MATRICULA_ID:", "");
-        UUID matriculaId = UUID.fromString(qrCode);
-
+        UUID matriculaId = UUID.fromString(id); // usa id (valor limpo)
         return matriculaRepository.findById(matriculaId)
                 .orElseThrow(() -> new RuntimeException("QR Code inválido"));
     }

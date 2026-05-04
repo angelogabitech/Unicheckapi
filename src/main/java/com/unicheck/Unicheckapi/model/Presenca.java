@@ -23,6 +23,10 @@ public class Presenca {
     private Aluno aluno;
 
     @ManyToOne
+    @JoinColumn(name = "aula_id", nullable = false)
+    private Aula aula;
+
+    @ManyToOne
     private Disciplina disciplina;
 
     private LocalDateTime dataHora;
