@@ -18,22 +18,19 @@ public class UsuarioService {
     }
 
     public Usuario salvar(Usuario usuario) {
-<<<<<<< HEAD
 
         if (usuario.getEmail() == null || usuario.getEmail().isBlank()) {
-            throw new RuntimeException("Email é obrigatório");
+            throw new RuntimeException("Email Ã© obrigatÃ³rio");
         }
 
         if (usuario.getNome() == null || usuario.getNome().isBlank()) {
-            throw new RuntimeException("Nome é obrigatório");
+            throw new RuntimeException("Nome Ã© obrigatÃ³rio");
         }
 
         if (usuario.getSenha() == null || usuario.getSenha().isBlank()) {
-            throw new RuntimeException("Senha é obrigatória");
+            throw new RuntimeException("Senha Ã© obrigatÃ³ria");
         }
 
-=======
->>>>>>> 0fe0c1eff8687d7baa9153ab44cce2e9923c8612
         return usuarioRepository.save(usuario);
     }
 
@@ -42,7 +39,7 @@ public class UsuarioService {
     }
     public Usuario buscarPorId(UUID id) {
         return usuarioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+                .orElseThrow(() -> new RuntimeException("UsuÃ¡rio nÃ£o encontrado"));
     }
 
     public void deletar(UUID id) {
@@ -58,10 +55,7 @@ public class UsuarioService {
         usuario.setSenha(dto.getSenha());
         usuario.setRole(dto.getRole());
 
-<<<<<<< HEAD
 
-=======
->>>>>>> 0fe0c1eff8687d7baa9153ab44cce2e9923c8612
         return usuarioRepository.save(usuario);
     }
 }

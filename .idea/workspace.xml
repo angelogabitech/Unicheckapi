@@ -5,36 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="76580513-1cbf-4513-bce6-f34e47b777be" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/Controller/AlunoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/Controller/AlunoController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/Controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/Controller/AuthController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/Controller/DisciplinaController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/Controller/DisciplinaController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/Controller/PresencaController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/Controller/PresencaController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/Controller/ProfessorController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/Controller/ProfessorController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/Controller/QrCodeController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/Controller/QrCodeController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/Controller/TestController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/dto/DisciplinaRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/dto/DisciplinaRequestDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/model/Aluno.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/model/Aluno.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/model/Aula.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/model/Aula.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/model/Disciplina.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/model/Disciplina.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/model/Matricula.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/model/Matricula.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/model/Presenca.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/model/Presenca.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/model/Professor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/model/Professor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/model/Turma.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/model/Turma.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/model/Usuario.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/model/Usuario.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/repository/AlunoRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/repository/AlunoRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/repository/DisciplinaRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/repository/DisciplinaRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/repository/PresencaRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/repository/PresencaRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/security/JwtAuthenticationFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/security/JwtAuthenticationFilter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/security/SecurityConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/service/AlunoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/service/AlunoService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/service/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/service/AuthService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/service/DisciplinaService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/service/DisciplinaService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/service/JwtService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/service/JwtService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/service/PresencaService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/service/PresencaService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/service/ProfessorService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/service/ProfessorService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/service/QrCodeService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unicheck/Unicheckapi/service/QrCodeService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/unicheck/Unicheckapi/UnicheckapiApplicationTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/unicheck/Unicheckapi/UnicheckapiApplicationTests.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

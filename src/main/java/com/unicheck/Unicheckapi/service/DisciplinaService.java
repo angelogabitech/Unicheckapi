@@ -1,6 +1,5 @@
 package com.unicheck.Unicheckapi.service;
 
-<<<<<<< HEAD
 import com.unicheck.Unicheckapi.dto.DisciplinaBulkRequestDTO;
 import com.unicheck.Unicheckapi.dto.DisciplinaRequestDTO;
 import com.unicheck.Unicheckapi.model.Disciplina;
@@ -19,22 +18,12 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.UUID;
-=======
-import com.unicheck.Unicheckapi.model.Disciplina;
-import com.unicheck.Unicheckapi.model.Professor;
-import com.unicheck.Unicheckapi.repository.DisciplinaRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
->>>>>>> 0fe0c1eff8687d7baa9153ab44cce2e9923c8612
 
 @Service
 @RequiredArgsConstructor
 public class DisciplinaService {
 
     private final DisciplinaRepository disciplinaRepository;
-<<<<<<< HEAD
     private final UsuarioRepository usuarioRepository;
     private final ProfessorService professorService;
     private final TurmaService turmaService;
@@ -50,29 +39,17 @@ public class DisciplinaService {
             throw new ResponseStatusException(HttpStatus.CONFLICT,
                     "Este professor ja possui uma disciplina nesta turma.");
         }
-=======
-    private final ProfessorService professorService;
-
-    public Disciplina criar(Disciplina dto) {
-
-        Professor professor =
-                professorService.buscarPorId(dto.getProfessor().getId());
->>>>>>> 0fe0c1eff8687d7baa9153ab44cce2e9923c8612
 
         Disciplina disciplina = Disciplina.builder()
                 .nome(dto.getNome())
                 .codigo(dto.getCodigo())
-<<<<<<< HEAD
                 .turma(turma)
-=======
->>>>>>> 0fe0c1eff8687d7baa9153ab44cce2e9923c8612
                 .professor(professor)
                 .build();
 
         return disciplinaRepository.save(disciplina);
     }
 
-<<<<<<< HEAD
     public List<Disciplina> criarEmLote(DisciplinaBulkRequestDTO dto) {
         return dto.getTurmaIds().stream()
                 .map(turmaId -> {
@@ -195,9 +172,3 @@ public class DisciplinaService {
         disciplinaRepository.save(disciplina);
     }
 }
-=======
-    public List<Disciplina> listar(){
-        return disciplinaRepository.findAll();
-    }
-}
->>>>>>> 0fe0c1eff8687d7baa9153ab44cce2e9923c8612
