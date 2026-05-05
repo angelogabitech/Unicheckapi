@@ -19,6 +19,9 @@ public class Presenca {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Column(name = "client_id", unique = true)
+    private UUID clientId;
+
     @ManyToOne
     private Aluno aluno;
 
@@ -33,6 +36,8 @@ public class Presenca {
 
     @PrePersist
     public void prePersist() {
-        dataHora = LocalDateTime.now();
+        if (dataHora == null) {
+            dataHora = LocalDateTime.now();
+        }
     }
 }
