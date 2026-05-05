@@ -1,9 +1,6 @@
-
 package com.unicheck.Unicheckapi.service;
 import com.unicheck.Unicheckapi.dto.DashboardDisciplinaDTO;
 import com.unicheck.Unicheckapi.dto.SincronizacaoPresencaDTO;
-import com.unicheck.Unicheckapi.model.Aluno;
-
 import com.unicheck.Unicheckapi.dto.AlunoResponseDTO;
 import com.unicheck.Unicheckapi.model.*;
 import com.unicheck.Unicheckapi.repository.AlunoRepository;
@@ -11,9 +8,7 @@ import com.unicheck.Unicheckapi.repository.AulaRepository;
 import com.unicheck.Unicheckapi.repository.DisciplinaRepository;
 import com.unicheck.Unicheckapi.repository.PresencaRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.UUID;
@@ -37,20 +32,16 @@ public class PresencaService {
 
         Aula aula = aulaRepository.findById(aulaId)      // ← minúsculo
                 .orElseThrow(() -> new RuntimeException("Aula não encontrada"));
-        disciplinaService.validarPermissaoDisciplina(aula.getDisciplina());
+        disciplinaService.buscarDisciplinaPermitidaParaUsuario(aula.getDisciplina().getId());
 
         if (!aula.isAtiva()) {
             throw new RuntimeException("A aula já foi encerrada");
         }
 
-        if (presencaRepository.existsByAlunoIdAndAulaId(aluno.getId(), aula.getId())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT,
-                    "Presenca ja registrada para este aluno nesta aula.");
-        }
-
         Presenca presenca = Presenca.builder()
                 .aluno(aluno)
                 .aula(aula)
+                .disciplina(aula.getDisciplina())
                 .build();
 
         presencaRepository.save(presenca);
@@ -77,18 +68,14 @@ public class PresencaService {
     }
 
     public List<DashboardDisciplinaDTO> gerarDashboardProfessor(UUID professorId) {
-        Usuario usuario = disciplinaService.usuarioAutenticado();
-        if (usuario.getRole() == Role.PROFESSOR && !usuario.getId().equals(professorId)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
-                    "Professor autenticado nao pode acessar dashboard de outro professor.");
-        }
-        List<Disciplina> disciplinas = disciplinaRepository.findByProfessorIdAndAtivaTrue(professorId);
+        List<Disciplina> disciplinas = disciplinaService.listarPorProfessor(professorId);
         return calcularDashboard(disciplinas);
     }
 
     private List<DashboardDisciplinaDTO> calcularDashboard(List<Disciplina> disciplinas) {
-        return disciplinas.stream().filter(d -> d.getTurma() != null).map(d -> {
-            long totalAlunos = alunoRepository.countByTurmaId(d.getTurma().getId());
+        return disciplinas.stream().map(d -> {
+            boolean possuiTurma = d.getTurma() != null;
+            long totalAlunos = possuiTurma ? alunoRepository.countByTurmaId(d.getTurma().getId()) : 0;
             long totalAulas = aulaRepository.countByDisciplinaId(d.getId());
             long totalPresencas = presencaRepository.countByAulasDisciplinaId(d.getId());
             long totalFaltas = (totalAlunos * totalAulas) - totalPresencas;
@@ -97,7 +84,7 @@ public class PresencaService {
 
             return DashboardDisciplinaDTO.builder()
                     .nomeDisciplina(d.getNome())
-                    .nomeTurma(d.getTurma().getIdentificacao())
+                    .nomeTurma(possuiTurma ? d.getTurma().getIdentificacao() : "Sem turma")
                     .totalAlunos(totalAlunos)
                     .totalPresencas(totalPresencas)
                     .totalFaltas(Math.max(0, totalFaltas))
@@ -105,6 +92,13 @@ public class PresencaService {
                     .build();
         }).collect(java.util.stream.Collectors.toList());
     }
+    public void deletarPresenca(UUID id) {
+        Presenca presenca = presencaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Presença não encontrada"));
+        disciplinaService.buscarDisciplinaPermitidaParaUsuario(presenca.getAula().getDisciplina().getId());
+        presencaRepository.delete(presenca);
+    }
+
     public void sincronizar(List<SincronizacaoPresencaDTO> lista) {
         for (SincronizacaoPresencaDTO dto : lista) {
             // Evitar duplicata: verifica se já existe presença para o par (aluno, aula)
@@ -116,20 +110,16 @@ public class PresencaService {
                         .orElseThrow(() -> new RuntimeException("Aluno não encontrado: " + dto.getAlunoId()));
                 Aula aula = aulaRepository.findById(dto.getAulaId())
                         .orElseThrow(() -> new RuntimeException("Aula não encontrada: " + dto.getAulaId()));
+                disciplinaService.buscarDisciplinaPermitidaParaUsuario(aula.getDisciplina().getId());
 
                 Presenca presenca = Presenca.builder()
                         .aluno(aluno)
                         .aula(aula)
+                        .disciplina(aula.getDisciplina())
+                        .dataHora(dto.getDataHoraLocal())
                         .build();
                 presencaRepository.save(presenca);
             }
         }
-    }
-
-    public void deletarPresenca(UUID id) {
-        Presenca presenca = presencaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Presenca nao encontrada"));
-        disciplinaService.validarPermissaoDisciplina(presenca.getAula().getDisciplina());
-        presencaRepository.delete(presenca);
     }
 }
