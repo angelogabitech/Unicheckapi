@@ -19,6 +19,9 @@ public class Aula {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Column(name = "client_id", unique = true)
+    private UUID clientId;
+
     @ManyToOne
     private Disciplina disciplina;
 
