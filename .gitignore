@@ -2,10 +2,11 @@ HELP.md
 target/
 !**/src/main/**/target/
 !**/src/test/**/target/
-FaltaApi (2).md 
+FaltaApi*.md
 alteracoes.md
 .tools
 .env
+.codex/
 
 ### STS ###
 .apt_generated
