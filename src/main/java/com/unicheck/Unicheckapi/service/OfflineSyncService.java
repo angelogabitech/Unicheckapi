@@ -65,7 +65,7 @@ public class OfflineSyncService {
         for (OfflineEncerramentoAulaSyncDTO dto : safeList(request.getEncerramentos())) {
             try {
                 Aula aula = resolverAula(dto.getAulaId(), dto.getAulaClientId(), aulasPorClientId);
-                disciplinaService.buscarDisciplinaPermitidaParaUsuario(aula.getDisciplina().getId());
+                disciplinaService.buscarPermitidaParaUsuario(aula.getDisciplina().getId());
                 aula.setAtiva(false);
                 aulaRepository.save(aula);
                 response.getEncerramentos().add(new OfflineSyncMapDTO(dto.getClientId(), aula.getId()));
@@ -83,12 +83,12 @@ public class OfflineSyncService {
         validar(dto.getTitulo() != null && !dto.getTitulo().isBlank(), "titulo da aula e obrigatorio");
 
         return aulaRepository.findByClientId(dto.getClientId()).orElseGet(() -> {
-            Disciplina disciplina = disciplinaService.buscarDisciplinaPermitidaParaUsuario(dto.getDisciplinaId());
+            Disciplina disciplina = disciplinaService.buscarPermitidaParaUsuario(dto.getDisciplinaId());
             Aula aula = Aula.builder()
                     .clientId(dto.getClientId())
                     .disciplina(disciplina)
                     .titulo(dto.getTitulo())
-                    .dataHora(dto.getDataHoraLocal() != null ? dto.getDataHoraLocal() : LocalDateTime.now())
+                    .dataHora(dto.getDataHoraLocal() != null ? dto.getDataHoraLocal().toLocalDateTime() : LocalDateTime.now())
                     .ativa(true)
                     .build();
             return aulaRepository.save(aula);
@@ -105,7 +105,7 @@ public class OfflineSyncService {
         }
 
         Aula aula = resolverAula(dto.getAulaId(), dto.getAulaClientId(), aulasPorClientId);
-        disciplinaService.buscarDisciplinaPermitidaParaUsuario(aula.getDisciplina().getId());
+        disciplinaService.buscarPermitidaParaUsuario(aula.getDisciplina().getId());
 
         var existentePorAlunoAula = presencaRepository.findByAlunoIdAndAulaId(dto.getAlunoId(), aula.getId());
         if (existentePorAlunoAula.isPresent()) {
@@ -120,7 +120,7 @@ public class OfflineSyncService {
                 .aluno(aluno)
                 .aula(aula)
                 .disciplina(aula.getDisciplina())
-                .dataHora(dto.getDataHoraLocal() != null ? dto.getDataHoraLocal() : LocalDateTime.now())
+                .dataHora(dto.getDataHoraLocal() != null ? dto.getDataHoraLocal().toLocalDateTime() : LocalDateTime.now())
                 .build();
 
         return presencaRepository.save(presenca);
@@ -156,3 +156,4 @@ public class OfflineSyncService {
         return value == null ? Collections.emptyList() : value;
     }
 }
+

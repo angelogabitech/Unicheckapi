@@ -28,6 +28,12 @@ public class AlunoController {
     public List<Aluno> listar(){
         return alunoService.listar();
     }
+
+    @GetMapping("/turma/{turmaId}")
+    public List<Aluno> listarPorTurma(@PathVariable UUID turmaId) {
+        return alunoService.listarPorTurmaPermitida(turmaId);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Aluno> buscarPorId(@PathVariable UUID id) {
         return ResponseEntity.ok(alunoService.buscarPorId(id));
@@ -59,3 +65,4 @@ public class AlunoController {
     }
 
 }
+

@@ -46,21 +46,29 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
 
-                        // Apenas GESTOR pode gerenciar usuários, turmas e disciplinas
+                        // Apenas GESTOR pode gerenciar usuÃ¡rios, turmas e disciplinas
                         .requestMatchers(HttpMethod.GET, "/disciplinas").hasRole("GESTOR")
-                        .requestMatchers(HttpMethod.GET, "/disciplinas/minhas", "/disciplinas/professor/**").hasAnyRole("PROFESSOR", "GESTOR")
+                        .requestMatchers(HttpMethod.GET, "/disciplinas/minhas", "/disciplinas/turma/**").hasAnyRole("ALUNO", "PROFESSOR", "GESTOR")
+                        .requestMatchers(HttpMethod.GET, "/disciplinas/professor/**").hasAnyRole("PROFESSOR", "GESTOR")
+                        .requestMatchers(HttpMethod.GET, "/alunos").hasRole("GESTOR")
+                        .requestMatchers(HttpMethod.GET, "/alunos/turma/**").hasAnyRole("ALUNO", "PROFESSOR", "GESTOR")
                         .requestMatchers(HttpMethod.POST, "/professores/**", "/alunos/**", "/turmas/**", "/disciplinas/**").hasRole("GESTOR")
                         .requestMatchers(HttpMethod.PUT, "/turmas/**", "/disciplinas/**").hasRole("GESTOR")
                         .requestMatchers(HttpMethod.DELETE, "/turmas/**", "/disciplinas/**", "/alunos/**", "/professores/**").hasRole("GESTOR")
                         .requestMatchers("/alunos/*/turma").hasRole("GESTOR")
 
-                        // Professor pode iniciar/encerrar aulas e registrar/invalidar presenças
-                        .requestMatchers("/aulas/**").hasAnyRole("PROFESSOR", "GESTOR")
+                        // Professor pode iniciar/encerrar aulas e registrar/invalidar presenÃ§as
+                        .requestMatchers(HttpMethod.GET, "/aulas/disciplina/**").hasAnyRole("ALUNO", "PROFESSOR", "GESTOR")
+                        .requestMatchers(HttpMethod.POST, "/aulas/**").hasAnyRole("PROFESSOR", "GESTOR")
+                        .requestMatchers(HttpMethod.PATCH, "/aulas/**").hasAnyRole("PROFESSOR", "GESTOR")
+                        .requestMatchers(HttpMethod.GET, "/horarios/disciplina/**", "/horarios/turma/**").hasAnyRole("ALUNO", "PROFESSOR", "GESTOR")
                         .requestMatchers(HttpMethod.GET, "/presencas/dashboard").hasRole("GESTOR")
-                        .requestMatchers(HttpMethod.GET, "/presencas/dashboard/professor/**", "/presencas/disciplina/**").hasAnyRole("PROFESSOR", "GESTOR")
+                        .requestMatchers(HttpMethod.GET, "/presencas/aluno/**").hasAnyRole("ALUNO", "GESTOR")
+                        .requestMatchers(HttpMethod.GET, "/presencas/dashboard/professor/**", "/presencas/disciplina/**", "/presencas/aula/**").hasAnyRole("PROFESSOR", "GESTOR")
                         .requestMatchers("/presencas/registrar").hasRole("PROFESSOR")
                         .requestMatchers("/presencas/sincronizar").hasAnyRole("PROFESSOR", "GESTOR")
                         .requestMatchers("/sync/offline").hasAnyRole("PROFESSOR", "GESTOR")
+                        .requestMatchers(HttpMethod.GET, "/offline/bootstrap").hasAnyRole("ALUNO", "PROFESSOR", "GESTOR")
                         .requestMatchers(HttpMethod.GET, "/presencas").hasRole("GESTOR")
                         .requestMatchers(HttpMethod.DELETE, "/presencas/**").hasAnyRole("PROFESSOR", "GESTOR")
 
@@ -79,3 +87,4 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 }
+

@@ -1,4 +1,4 @@
-package com.unicheck.Unicheckapi.controller;
+package com.unicheck.Unicheckapi.Controller;
 
 import com.unicheck.Unicheckapi.dto.HorarioAulaRequestDTO;
 import com.unicheck.Unicheckapi.model.HorarioAula;
@@ -38,6 +38,11 @@ public class HorarioAulaController {
         return ResponseEntity.ok(horarioAulaService.listarPorDisciplina(disciplinaId));
     }
 
+    @GetMapping("/turma/{turmaId}")
+    public ResponseEntity<List<HorarioAula>> listarPorTurma(@PathVariable UUID turmaId) {
+        return ResponseEntity.ok(horarioAulaService.listarPorTurma(turmaId));
+    }
+
 
     @PutMapping("/{id}")
     public ResponseEntity<HorarioAula> atualizar(
@@ -53,3 +58,5 @@ public class HorarioAulaController {
         return ResponseEntity.noContent().build();
     }
 }
+
+

@@ -11,4 +11,6 @@ import java.util.UUID;
 public interface HorarioAulaRepository extends JpaRepository<HorarioAula, UUID> {
 
     List<HorarioAula> findByDisciplinaId(UUID disciplinaId);
+    List<HorarioAula> findByDisciplinaIdIn(List<UUID> disciplinaIds);
 }
+

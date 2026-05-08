@@ -10,15 +10,21 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface PresencaRepository extends JpaRepository<Presenca, UUID> {
-   //Verificação se já existe alguma aluno com o mesmo id pra evitar presença duplicada
+   //VerificaÃ§Ã£o se jÃ¡ existe alguma aluno com o mesmo id pra evitar presenÃ§a duplicada
     boolean existsByAlunoIdAndDisciplinaId(UUID alunoId, UUID disciplinaId);
     List<Presenca> findByAlunoId(UUID alunoId);
     @Query("SELECT p FROM Presenca p WHERE p.aula.disciplina.id = :disciplinaId")
     List<Presenca> findByAulaDisciplinaId(@Param("disciplinaId") UUID disciplinaId);
+    @Query("SELECT p FROM Presenca p WHERE p.aula.disciplina.id IN :disciplinaIds")
+    List<Presenca> findByAulaDisciplinaIdIn(@Param("disciplinaIds") List<UUID> disciplinaIds);
+    List<Presenca> findByAulaId(UUID aulaId);
     @Query("SELECT COUNT(p) FROM Presenca p WHERE p.aula.disciplina.id = :disciplinaId")
     long countByAulasDisciplinaId(@Param("disciplinaId") UUID disciplinaId);
+    @Query("SELECT COUNT(DISTINCT p.aula.id) FROM Presenca p WHERE p.aluno.id = :alunoId AND p.aula.disciplina.id = :disciplinaId")
+    long countAulasPresentesPorAlunoDisciplina(@Param("alunoId") UUID alunoId, @Param("disciplinaId") UUID disciplinaId);
     boolean existsByAlunoIdAndAulaId(UUID alunoId, UUID aulaId);
     Optional<Presenca> findByClientId(UUID clientId);
     Optional<Presenca> findByAlunoIdAndAulaId(UUID alunoId, UUID aulaId);
 
 }
+
