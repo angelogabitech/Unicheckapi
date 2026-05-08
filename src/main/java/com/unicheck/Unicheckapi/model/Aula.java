@@ -7,7 +7,10 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "aulas")
+@Table(
+        name = "aulas",
+        uniqueConstraints = @UniqueConstraint(name = "uk_aulas_client_id", columnNames = "client_id")
+)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -19,7 +22,7 @@ public class Aula {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "client_id", unique = true)
+    @Column(name = "client_id")
     private UUID clientId;
 
     @ManyToOne
@@ -35,3 +38,4 @@ public class Aula {
 
     private boolean ativa;
 }
+

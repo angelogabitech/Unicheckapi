@@ -9,7 +9,9 @@ import java.util.UUID;
 
 public interface AulaRepository extends JpaRepository<Aula, UUID> {
     List<Aula> findByDisciplinaId(UUID disciplinaId);
+    List<Aula> findByDisciplinaIdIn(List<UUID> disciplinaIds);
     List<Aula> findByDisciplinaIdAndAtivaTrue(UUID disciplinaId);
     long countByDisciplinaId(UUID disciplinaId);
     Optional<Aula> findByClientId(UUID clientId);
 }
+

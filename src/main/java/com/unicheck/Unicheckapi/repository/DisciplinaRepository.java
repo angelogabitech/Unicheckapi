@@ -14,5 +14,7 @@ public interface DisciplinaRepository extends JpaRepository<Disciplina, UUID> {
     List<Disciplina> findByTurmaIdAndProfessorIdAndAtivaTrue(UUID turmaId, UUID professorId);
     List<Disciplina> findByProfessorIdAndAtivaTrue(UUID professorId);
     boolean existsByProfessorIdAndTurmaId(UUID professorId, UUID turmaId);
+    boolean existsByProfessorIdAndTurmaIdAndAtivaTrue(UUID professorId, UUID turmaId);
     boolean existsByProfessorIdAndTurmaIdAndIdNot(UUID professorId, UUID turmaId, UUID id);
+    boolean existsByProfessorIdAndTurmaIdAndIdNotAndAtivaTrue(UUID professorId, UUID turmaId, UUID id);
 }

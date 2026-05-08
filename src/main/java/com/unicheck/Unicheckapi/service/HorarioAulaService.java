@@ -21,7 +21,7 @@ public class HorarioAulaService {
     private final DisciplinaService disciplinaService;
 
     public HorarioAula criar(HorarioAulaRequestDTO dto) {
-        Disciplina disciplina = disciplinaService.buscarDisciplinaPermitidaParaUsuario(dto.disciplinaId());
+        Disciplina disciplina = disciplinaService.buscarPermitidaParaUsuario(dto.disciplinaId());
 
         HorarioAula horario = HorarioAula.builder()
                 .disciplina(disciplina)
@@ -34,17 +34,29 @@ public class HorarioAulaService {
     }
 
     public List<HorarioAula> listarPorDisciplina(UUID disciplinaId) {
-        disciplinaService.buscarDisciplinaPermitidaParaUsuario(disciplinaId);
+        disciplinaService.buscarPermitidaParaUsuario(disciplinaId);
         return horarioAulaRepository.findByDisciplinaId(disciplinaId);
+    }
+
+    public List<HorarioAula> listarPorTurma(UUID turmaId) {
+        List<UUID> disciplinaIds = disciplinaService.listarPorTurma(turmaId).stream()
+                .map(Disciplina::getId)
+                .toList();
+
+        if (disciplinaIds.isEmpty()) {
+            return List.of();
+        }
+
+        return horarioAulaRepository.findByDisciplinaIdIn(disciplinaIds);
     }
 
     public HorarioAula atualizar(UUID id, HorarioAulaRequestDTO dto) {
         HorarioAula horario = horarioAulaRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(
-                        "Horario nao encontrado com id: " + id));
-        disciplinaService.validarPermissaoDisciplina(horario.getDisciplina());
+                        "HorÃ¡rio nÃ£o encontrado com id: " + id));
 
-        Disciplina disciplina = disciplinaService.buscarDisciplinaPermitidaParaUsuario(dto.disciplinaId());
+        disciplinaService.buscarPermitidaParaUsuario(horario.getDisciplina().getId());
+        Disciplina disciplina = disciplinaService.buscarPermitidaParaUsuario(dto.disciplinaId());
 
         horario.setDisciplina(disciplina);
         horario.setDiaSemana(DayOfWeek.valueOf(dto.diaSemana().toUpperCase()));
@@ -56,8 +68,9 @@ public class HorarioAulaService {
 
     public void deletar(UUID id) {
         HorarioAula horario = horarioAulaRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Horario nao encontrado com id: " + id));
-        disciplinaService.validarPermissaoDisciplina(horario.getDisciplina());
+                .orElseThrow(() -> new EntityNotFoundException("HorÃ¡rio nÃ£o encontrado com id: " + id));
+        disciplinaService.buscarPermitidaParaUsuario(horario.getDisciplina().getId());
         horarioAulaRepository.delete(horario);
     }
 }
+

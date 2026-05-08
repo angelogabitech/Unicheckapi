@@ -31,3 +31,7 @@ spring:
       properties:                                                                                                     
         hibernate:                                                                                                    
           format_sql: false 
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:unicheck-local-dev-secret-32-bytes-minimum-2026}

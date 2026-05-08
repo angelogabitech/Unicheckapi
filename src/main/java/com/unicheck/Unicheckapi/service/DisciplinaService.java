@@ -2,16 +2,17 @@ package com.unicheck.Unicheckapi.service;
 
 import com.unicheck.Unicheckapi.dto.DisciplinaBulkRequestDTO;
 import com.unicheck.Unicheckapi.dto.DisciplinaRequestDTO;
+import com.unicheck.Unicheckapi.model.Aluno;
 import com.unicheck.Unicheckapi.model.Disciplina;
 import com.unicheck.Unicheckapi.model.Professor;
 import com.unicheck.Unicheckapi.model.Role;
 import com.unicheck.Unicheckapi.model.Turma;
 import com.unicheck.Unicheckapi.model.Usuario;
+import com.unicheck.Unicheckapi.repository.AlunoRepository;
 import com.unicheck.Unicheckapi.repository.DisciplinaRepository;
 import com.unicheck.Unicheckapi.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -25,16 +26,15 @@ public class DisciplinaService {
 
     private final DisciplinaRepository disciplinaRepository;
     private final UsuarioRepository usuarioRepository;
+    private final AlunoRepository alunoRepository;
     private final ProfessorService professorService;
     private final TurmaService turmaService;
 
     public Disciplina criar(DisciplinaRequestDTO dto) {
-        Professor professor = dto.getProfessorId() == null ? null : professorService.buscarPorId(dto.getProfessorId());
-        Turma turma = dto.getTurmaId() == null ? null : turmaService.buscarPorId(dto.getTurmaId());
+        Professor professor = professorService.buscarPorId(dto.getProfessorId());
+        Turma turma = turmaService.buscarPorId(dto.getTurmaId());
 
-        boolean conflito = dto.getProfessorId() != null
-                && dto.getTurmaId() != null
-                && disciplinaRepository.existsByProfessorIdAndTurmaId(dto.getProfessorId(), dto.getTurmaId());
+        boolean conflito = disciplinaRepository.existsByProfessorIdAndTurmaIdAndAtivaTrue(dto.getProfessorId(), dto.getTurmaId());
         if (conflito) {
             throw new ResponseStatusException(HttpStatus.CONFLICT,
                     "Este professor ja possui uma disciplina nesta turma.");
@@ -68,91 +68,89 @@ public class DisciplinaService {
                 .orElseThrow(() -> new RuntimeException("Disciplina nao encontrada"));
     }
 
-    public Disciplina buscarDisciplinaPermitidaParaUsuario(UUID disciplinaId) {
-        Disciplina disciplina = buscarPorId(disciplinaId);
-        validarPermissaoDisciplina(disciplina);
-        return disciplina;
+    public Usuario usuarioAutenticado() {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || authentication.getName() == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario nao autenticado");
+        }
+
+        return usuarioRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario nao encontrado"));
     }
 
-    public void validarPermissaoDisciplina(Disciplina disciplina) {
+    public Disciplina buscarPermitidaParaUsuario(UUID id) {
+        Disciplina disciplina = buscarPorId(id);
         Usuario usuario = usuarioAutenticado();
 
         if (usuario.getRole() == Role.GESTOR) {
-            return;
+            return disciplina;
         }
 
         if (usuario.getRole() == Role.PROFESSOR
                 && disciplina.getProfessor() != null
                 && disciplina.getProfessor().getId().equals(usuario.getId())) {
-            return;
+            return disciplina;
+        }
+
+        if (usuario.getRole() == Role.ALUNO
+                && disciplina.getTurma() != null) {
+            Aluno aluno = alunoRepository.findById(usuario.getId())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN,
+                            "Aluno nao encontrado para validar permissao."));
+            if (aluno.getTurma() != null && aluno.getTurma().getId().equals(disciplina.getTurma().getId())) {
+                return disciplina;
+            }
         }
 
         throw new ResponseStatusException(HttpStatus.FORBIDDEN,
-                "Esta disciplina nao pertence ao professor autenticado.");
+                "Usuario sem permissao para acessar esta disciplina.");
     }
 
-    public Usuario usuarioAutenticado() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || authentication.getName() == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-        }
-
-        return usuarioRepository.findByEmail(authentication.getName())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED));
+    public Disciplina buscarDisciplinaPermitidaParaUsuario(UUID id) {
+        return buscarPermitidaParaUsuario(id);
     }
 
-    public List<Disciplina> listar(){
-        return disciplinaRepository.findByAtivaTrue();
-    }
-
-    public List<Disciplina> listarPorTurma(UUID turmaId) {
-        Usuario usuario = usuarioAutenticado();
-        if (usuario.getRole() == Role.GESTOR) {
-            return disciplinaRepository.findByTurmaIdAndAtivaTrue(turmaId);
+    public void validarPermissaoDisciplina(Disciplina disciplina) {
+        if (disciplina == null || disciplina.getId() == null) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                    "Disciplina invalida para validar permissao.");
         }
-        if (usuario.getRole() == Role.PROFESSOR) {
-            return disciplinaRepository.findByTurmaIdAndProfessorIdAndAtivaTrue(turmaId, usuario.getId());
-        }
-        throw new ResponseStatusException(HttpStatus.FORBIDDEN,
-                "Usuario autenticado nao pode listar disciplinas por turma.");
-    }
-
-    public List<Disciplina> listarPorProfessor(UUID professorId) {
-        return disciplinaRepository.findByProfessorIdAndAtivaTrue(professorId);
-    }
-
-    public List<Disciplina> listarPorProfessorPermitido(UUID professorId) {
-        Usuario usuario = usuarioAutenticado();
-        if (usuario.getRole() == Role.GESTOR) {
-            return listarPorProfessor(professorId);
-        }
-        if (usuario.getRole() == Role.PROFESSOR && usuario.getId().equals(professorId)) {
-            return listarPorProfessor(professorId);
-        }
-        throw new ResponseStatusException(HttpStatus.FORBIDDEN,
-                "Professor autenticado nao pode listar disciplinas de outro professor.");
+        buscarPermitidaParaUsuario(disciplina.getId());
     }
 
     public List<Disciplina> listarMinhas() {
         Usuario usuario = usuarioAutenticado();
+
         if (usuario.getRole() == Role.GESTOR) {
             return listar();
         }
+
         if (usuario.getRole() == Role.PROFESSOR) {
             return disciplinaRepository.findByProfessorIdAndAtivaTrue(usuario.getId());
         }
-        throw new ResponseStatusException(HttpStatus.FORBIDDEN,
-                "Usuario autenticado nao pode listar disciplinas de professor.");
+
+        if (usuario.getRole() == Role.ALUNO) {
+            Aluno aluno = alunoRepository.findById(usuario.getId())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN,
+                            "Aluno nao encontrado para listar disciplinas."));
+            if (aluno.getTurma() == null) return List.of();
+            return disciplinaRepository.findByTurmaIdAndAtivaTrue(aluno.getTurma().getId());
+        }
+
+        throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Usuario sem permissao para listar disciplinas.");
     }
 
     public Disciplina atualizar(UUID id, DisciplinaRequestDTO dto) {
         Disciplina disciplina = buscarPorId(id);
-        Professor professor = dto.getProfessorId() == null ? null : professorService.buscarPorId(dto.getProfessorId());
-        Turma turma = dto.getTurmaId() == null ? null : turmaService.buscarPorId(dto.getTurmaId());
+        Professor professor = professorService.buscarPorId(dto.getProfessorId());
+        Turma turma = turmaService.buscarPorId(dto.getTurmaId());
 
-        boolean conflito = dto.getProfessorId() != null
-                && dto.getTurmaId() != null
-                && disciplinaRepository.existsByProfessorIdAndTurmaIdAndIdNot(dto.getProfessorId(), dto.getTurmaId(), id);
+        boolean conflito = disciplinaRepository.existsByProfessorIdAndTurmaIdAndIdNotAndAtivaTrue(
+                dto.getProfessorId(),
+                dto.getTurmaId(),
+                id
+        );
+
         if (conflito) {
             throw new ResponseStatusException(HttpStatus.CONFLICT,
                     "Este professor ja possui uma disciplina nesta turma.");
@@ -160,8 +158,8 @@ public class DisciplinaService {
 
         disciplina.setNome(dto.getNome());
         disciplina.setCodigo(dto.getCodigo());
-        disciplina.setProfessor(professor);
         disciplina.setTurma(turma);
+        disciplina.setProfessor(professor);
 
         return disciplinaRepository.save(disciplina);
     }
@@ -171,4 +169,53 @@ public class DisciplinaService {
         disciplina.setAtiva(false);
         disciplinaRepository.save(disciplina);
     }
+
+    public List<Disciplina> listar(){
+        return disciplinaRepository.findByAtivaTrue();
+    }
+
+    public List<Disciplina> listarPorTurma(UUID turmaId) {
+        Usuario usuario = usuarioAutenticado();
+
+        if (usuario.getRole() == Role.GESTOR) {
+            return disciplinaRepository.findByTurmaIdAndAtivaTrue(turmaId);
+        }
+
+        if (usuario.getRole() == Role.PROFESSOR
+                && disciplinaRepository.existsByProfessorIdAndTurmaIdAndAtivaTrue(usuario.getId(), turmaId)) {
+            return disciplinaRepository.findByTurmaIdAndAtivaTrue(turmaId);
+        }
+
+        if (usuario.getRole() == Role.ALUNO) {
+            Aluno aluno = alunoRepository.findById(usuario.getId())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN,
+                            "Aluno nao encontrado para listar disciplinas da turma."));
+            if (aluno.getTurma() != null && aluno.getTurma().getId().equals(turmaId)) {
+                return disciplinaRepository.findByTurmaIdAndAtivaTrue(turmaId);
+            }
+        }
+
+        throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                "Usuario sem permissao para listar disciplinas desta turma.");
+    }
+
+    public List<Disciplina> listarPorTurmaSemFiltro(UUID turmaId) {
+        return disciplinaRepository.findByTurmaIdAndAtivaTrue(turmaId);
+    }
+
+    public List<Disciplina> listarPorProfessor(UUID professorId) {
+        Usuario usuario = usuarioAutenticado();
+
+        if (usuario.getRole() == Role.PROFESSOR && !usuario.getId().equals(professorId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                    "Professor nao pode listar disciplinas de outro professor.");
+        }
+
+        return disciplinaRepository.findByProfessorIdAndAtivaTrue(professorId);
+    }
+
+    public List<Disciplina> listarPorProfessorPermitido(UUID professorId) {
+        return listarPorProfessor(professorId);
+    }
 }
+

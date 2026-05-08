@@ -1,22 +1,15 @@
 package com.unicheck.Unicheckapi.service;
 
 import com.google.zxing.BarcodeFormat;
-import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
-import com.unicheck.Unicheckapi.model.Matricula;
-import com.unicheck.Unicheckapi.repository.MatriculaRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 public class QrCodeService {
-    private final MatriculaRepository matriculaRepository;
 
     public byte[] gerarQrCode(String conteudo) {
         try {
@@ -50,11 +43,5 @@ public class QrCodeService {
             throw new RuntimeException("Erro ao gerar QR Code");
         }
     }
-
-    public Matricula validarQrCode(String qrCode) {
-        String id = qrCode.replace("MATRICULA_ID:", "");
-        UUID matriculaId = UUID.fromString(id); // usa id (valor limpo)
-        return matriculaRepository.findById(matriculaId)
-                .orElseThrow(() -> new RuntimeException("QR Code inválido"));
-    }
 }
+
