@@ -24,6 +24,8 @@ public class Usuario {
     @GeneratedValue
     private UUID id;
 
+    @Column(name = "client_id", unique = true)
+    private UUID clientId;
 
     @Column(nullable = false)
     private String nome;

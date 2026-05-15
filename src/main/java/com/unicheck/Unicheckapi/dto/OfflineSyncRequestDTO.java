@@ -10,4 +10,8 @@ public class OfflineSyncRequestDTO {
     private List<OfflineAulaSyncDTO> aulas = new ArrayList<>();
     private List<OfflinePresencaSyncDTO> presencas = new ArrayList<>();
     private List<OfflineEncerramentoAulaSyncDTO> encerramentos = new ArrayList<>();
+    private OfflineTurmasSyncDTO turmas;
+    private OfflineProfessoresSyncDTO professores;
+    private OfflineAlunosSyncDTO alunos;
+    private OfflineDisciplinasSyncDTO disciplinas;
 }
