@@ -11,4 +11,8 @@ public class OfflineSyncResponseDTO {
     private List<OfflineSyncMapDTO> presencas = new ArrayList<>();
     private List<OfflineSyncMapDTO> encerramentos = new ArrayList<>();
     private List<OfflineSyncErroDTO> erros = new ArrayList<>();
+    private OfflineGestorEntidadeResponse turmas = new OfflineGestorEntidadeResponse();
+    private OfflineGestorEntidadeResponse professores = new OfflineGestorEntidadeResponse();
+    private OfflineGestorEntidadeResponse alunos = new OfflineGestorEntidadeResponse();
+    private OfflineGestorEntidadeResponse disciplinas = new OfflineGestorEntidadeResponse();
 }

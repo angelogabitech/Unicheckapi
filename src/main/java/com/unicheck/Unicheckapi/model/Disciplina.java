@@ -25,6 +25,9 @@ public class Disciplina {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Column(name = "client_id", unique = true)
+    private UUID clientId;
+
     @Column(nullable = false)
     private String nome;
 
