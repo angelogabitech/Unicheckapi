@@ -1,6 +1,7 @@
 package com.unicheck.Unicheckapi.service;
 
 import com.unicheck.Unicheckapi.dto.LoginRequestDTO;
+import com.unicheck.Unicheckapi.dto.LoginResponseDTO;
 import com.unicheck.Unicheckapi.dto.MeResponseDTO;
 import com.unicheck.Unicheckapi.dto.RegisterRequestDTO;
 import com.unicheck.Unicheckapi.model.Usuario;
@@ -14,20 +15,27 @@ import org.springframework.stereotype.Service;
 public class AuthService {
 
     private final UsuarioRepository usuarioRepository;
-    private final JwtService jwtService;
+    private final RefreshTokenService refreshTokenService;
     private final PasswordEncoder passwordEncoder;
 
-    public String login(LoginRequestDTO dto) {
+    public LoginResponseDTO login(LoginRequestDTO dto) {
         Usuario usuario = usuarioRepository
                 .findByEmail(dto.getEmail())
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+                .orElseThrow(() -> new RuntimeException("Usuario nao encontrado"));
 
         if (!passwordEncoder.matches(dto.getSenha(), usuario.getSenha())) {
-            throw new RuntimeException("Senha inválida");
+            throw new RuntimeException("Senha invalida");
         }
 
-        // ← passa a role junto com o email
-        return jwtService.gerarToken(usuario.getEmail(), usuario.getRole().name());
+        return refreshTokenService.emitir(usuario);
+    }
+
+    public LoginResponseDTO refresh(String refreshToken) {
+        return refreshTokenService.rotacionar(refreshToken);
+    }
+
+    public void logout(String refreshToken) {
+        refreshTokenService.revogar(refreshToken);
     }
 
     public void register(RegisterRequestDTO dto) {

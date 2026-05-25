@@ -3,6 +3,7 @@ package com.unicheck.Unicheckapi.service;
 import com.unicheck.Unicheckapi.dto.*;
 import com.unicheck.Unicheckapi.model.*;
 import com.unicheck.Unicheckapi.repository.*;
+import com.unicheck.Unicheckapi.ws.RealtimeEventPublisher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -26,8 +27,10 @@ public class OfflineSyncService {
     private final ProfessorRepository professorRepository;
     private final DisciplinaRepository disciplinaRepository;
     private final MatriculaRepository matriculaRepository;
+    private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
     private final DisciplinaService disciplinaService;
+    private final RealtimeEventPublisher realtimeEventPublisher;
 
     @Transactional
     public OfflineSyncResponseDTO sincronizar(OfflineSyncRequestDTO request) {
@@ -39,14 +42,21 @@ public class OfflineSyncService {
         Map<UUID, UUID> turmaClientToServer = new HashMap<>();
         Map<UUID, UUID> professorClientToServer = new HashMap<>();
 
-        processarTurmasCriar(request, response, turmaClientToServer);
-        processarTurmasEditar(request, response);
-        processarProfessoresCriar(request, response, professorClientToServer);
-        processarProfessoresEditar(request, response);
-        processarAlunosCriar(request, response, turmaClientToServer);
-        processarAlunosEditar(request, response, turmaClientToServer);
-        processarDisciplinasCriar(request, response, turmaClientToServer, professorClientToServer);
-        processarDisciplinasEditar(request, response, turmaClientToServer, professorClientToServer);
+        if (temBlocosGestor(request)) {
+            Usuario usuario = disciplinaService.usuarioAutenticado();
+            if (usuario.getRole() == Role.GESTOR) {
+                processarTurmasCriar(request, response, turmaClientToServer);
+                processarTurmasEditar(request, response);
+                processarProfessoresCriar(request, response, professorClientToServer);
+                processarProfessoresEditar(request, response);
+                processarAlunosCriar(request, response, turmaClientToServer);
+                processarAlunosEditar(request, response, turmaClientToServer);
+                processarDisciplinasCriar(request, response, turmaClientToServer, professorClientToServer);
+                processarDisciplinasEditar(request, response, turmaClientToServer, professorClientToServer);
+            } else {
+                response.getErros().add(new OfflineSyncErroDTO(null, "GESTOR", "Usuario sem permissao para sincronizar cadastros do gestor"));
+            }
+        }
 
         Map<UUID, Aula> aulasPorClientId = new HashMap<>();
 
@@ -75,16 +85,19 @@ public class OfflineSyncService {
                 disciplinaService.buscarPermitidaParaUsuario(aula.getDisciplina().getId());
                 aula.setAtiva(false);
                 aulaRepository.save(aula);
+                publicarEventoAula(aula, "AULA_ENCERRADA");
                 response.getEncerramentos().add(new OfflineSyncMapDTO(dto.getClientId(), aula.getId()));
             } catch (Exception e) {
                 response.getErros().add(erro(dto.getClientId(), "ENCERRAR_AULA", e));
             }
         }
 
-        processarDisciplinasDeletar(request, response);
-        processarAlunosDeletar(request, response);
-        processarProfessoresDeletar(request, response);
-        processarTurmasDeletar(request, response);
+        if (temBlocosGestor(request) && disciplinaService.usuarioAutenticado().getRole() == Role.GESTOR) {
+            processarDisciplinasDeletar(request, response);
+            processarAlunosDeletar(request, response);
+            processarProfessoresDeletar(request, response);
+            processarTurmasDeletar(request, response);
+        }
 
         return response;
     }
@@ -96,6 +109,7 @@ public class OfflineSyncService {
         for (OfflineTurmaCriarDTO dto : safeList(request.getTurmas().getCriar())) {
             try {
                 validar(dto.getClientId() != null, "clientId da turma e obrigatorio");
+                boolean jaExistia = turmaRepository.findByClientId(dto.getClientId()).isPresent();
                 Turma turma = turmaRepository.findByClientId(dto.getClientId()).orElseGet(() -> {
                     Turma nova = Turma.builder()
                             .clientId(dto.getClientId())
@@ -107,6 +121,10 @@ public class OfflineSyncService {
                 });
                 turmaClientToServer.put(dto.getClientId(), turma.getId());
                 response.getTurmas().getCriadas().add(new OfflineSyncMapDTO(dto.getClientId(), turma.getId()));
+                if (!jaExistia) {
+                    realtimeEventPublisher.gestor("TURMA_CRIADA", "TURMA", turma.getId());
+                    realtimeEventPublisher.turma(turma.getId(), "TURMA_CRIADA");
+                }
             } catch (Exception e) {
                 response.getErros().add(erro(dto.getClientId(), "TURMA_CRIAR", e));
             }
@@ -125,6 +143,8 @@ public class OfflineSyncService {
                 turma.setPeriodo(dto.getPeriodo());
                 turmaRepository.save(turma);
                 response.getTurmas().getEditadas().add(new OfflineSyncMapDTO(dto.getClientId(), turma.getId()));
+                realtimeEventPublisher.gestor("TURMA_ATUALIZADA", "TURMA", turma.getId());
+                realtimeEventPublisher.turma(turma.getId(), "TURMA_ATUALIZADA");
             } catch (Exception e) {
                 response.getErros().add(erro(dto.getClientId(), "TURMA_EDITAR", e));
             }
@@ -148,6 +168,8 @@ public class OfflineSyncService {
                     turmaRepository.delete(turma);
                 });
                 response.getTurmas().getDeletadas().add(new OfflineSyncMapDTO(dto.getClientId(), dto.getServerId()));
+                realtimeEventPublisher.gestor("TURMA_DELETADA", "TURMA", dto.getServerId());
+                realtimeEventPublisher.turma(dto.getServerId(), "TURMA_DELETADA");
             } catch (Exception e) {
                 response.getErros().add(erro(dto.getClientId(), "TURMA_DELETAR", e));
             }
@@ -161,6 +183,10 @@ public class OfflineSyncService {
         for (OfflineProfessorCriarDTO dto : safeList(request.getProfessores().getCriar())) {
             try {
                 validar(dto.getClientId() != null, "clientId do professor e obrigatorio");
+                boolean jaExistia = professorRepository.findByClientId(dto.getClientId()).isPresent();
+                if (!jaExistia) {
+                    validar(!usuarioRepository.existsByEmail(dto.getEmail()), "E-mail ja cadastrado: " + dto.getEmail());
+                }
                 Professor professor = professorRepository.findByClientId(dto.getClientId()).orElseGet(() -> {
                     Professor novo = new Professor();
                     novo.setClientId(dto.getClientId());
@@ -172,6 +198,9 @@ public class OfflineSyncService {
                 });
                 professorClientToServer.put(dto.getClientId(), professor.getId());
                 response.getProfessores().getCriadas().add(new OfflineSyncMapDTO(dto.getClientId(), professor.getId()));
+                if (!jaExistia) {
+                    realtimeEventPublisher.gestor("PROFESSOR_CRIADO", "PROFESSOR", professor.getId());
+                }
             } catch (Exception e) {
                 response.getErros().add(erro(dto.getClientId(), "PROFESSOR_CRIAR", e));
             }
@@ -185,6 +214,7 @@ public class OfflineSyncService {
             try {
                 Professor professor = professorRepository.findById(dto.getServerId())
                         .orElseThrow(() -> new RuntimeException("Professor nao encontrado: " + dto.getServerId()));
+                validar(!usuarioRepository.existsByEmailAndIdNot(dto.getEmail(), professor.getId()), "E-mail ja cadastrado: " + dto.getEmail());
                 professor.setNome(dto.getNome());
                 professor.setEmail(dto.getEmail());
                 if (dto.getSenha() != null && !dto.getSenha().isBlank()) {
@@ -192,6 +222,7 @@ public class OfflineSyncService {
                 }
                 professorRepository.save(professor);
                 response.getProfessores().getEditadas().add(new OfflineSyncMapDTO(dto.getClientId(), professor.getId()));
+                realtimeEventPublisher.gestor("PROFESSOR_ATUALIZADO", "PROFESSOR", professor.getId());
             } catch (Exception e) {
                 response.getErros().add(erro(dto.getClientId(), "PROFESSOR_EDITAR", e));
             }
@@ -210,6 +241,7 @@ public class OfflineSyncService {
                     professorRepository.delete(professor);
                 });
                 response.getProfessores().getDeletadas().add(new OfflineSyncMapDTO(dto.getClientId(), dto.getServerId()));
+                realtimeEventPublisher.gestor("PROFESSOR_DELETADO", "PROFESSOR", dto.getServerId());
             } catch (Exception e) {
                 response.getErros().add(erro(dto.getClientId(), "PROFESSOR_DELETAR", e));
             }
@@ -223,6 +255,10 @@ public class OfflineSyncService {
         for (OfflineAlunoCriarDTO dto : safeList(request.getAlunos().getCriar())) {
             try {
                 validar(dto.getClientId() != null, "clientId do aluno e obrigatorio");
+                boolean jaExistia = alunoRepository.findByClientId(dto.getClientId()).isPresent();
+                if (!jaExistia) {
+                    validar(!usuarioRepository.existsByEmail(dto.getEmail()), "E-mail ja cadastrado: " + dto.getEmail());
+                }
                 Aluno aluno = alunoRepository.findByClientId(dto.getClientId()).orElseGet(() -> {
                     Aluno novo = new Aluno();
                     novo.setClientId(dto.getClientId());
@@ -235,6 +271,9 @@ public class OfflineSyncService {
                     return alunoRepository.save(novo);
                 });
                 response.getAlunos().getCriadas().add(new OfflineSyncMapDTO(dto.getClientId(), aluno.getId()));
+                if (!jaExistia) {
+                    publicarEventoAluno(aluno, "ALUNO_CRIADO");
+                }
             } catch (Exception e) {
                 response.getErros().add(erro(dto.getClientId(), "ALUNO_CRIAR", e));
             }
@@ -249,6 +288,7 @@ public class OfflineSyncService {
             try {
                 Aluno aluno = alunoRepository.findById(dto.getServerId())
                         .orElseThrow(() -> new RuntimeException("Aluno nao encontrado: " + dto.getServerId()));
+                validar(!usuarioRepository.existsByEmailAndIdNot(dto.getEmail(), aluno.getId()), "E-mail ja cadastrado: " + dto.getEmail());
                 aluno.setNome(dto.getNome());
                 aluno.setEmail(dto.getEmail());
                 aluno.setMatricula(dto.getMatricula());
@@ -261,6 +301,7 @@ public class OfflineSyncService {
                 }
                 alunoRepository.save(aluno);
                 response.getAlunos().getEditadas().add(new OfflineSyncMapDTO(dto.getClientId(), aluno.getId()));
+                publicarEventoAluno(aluno, "ALUNO_ATUALIZADO");
             } catch (Exception e) {
                 response.getErros().add(erro(dto.getClientId(), "ALUNO_EDITAR", e));
             }
@@ -273,9 +314,12 @@ public class OfflineSyncService {
         for (OfflineAlunoDeletarDTO dto : safeList(request.getAlunos().getDeletar())) {
             try {
                 alunoRepository.findById(dto.getServerId()).ifPresent(aluno -> {
+                    UUID turmaId = aluno.getTurma() != null ? aluno.getTurma().getId() : null;
                     presencaRepository.deleteAll(presencaRepository.findByAlunoId(aluno.getId()));
                     matriculaRepository.deleteAll(matriculaRepository.findByAlunoId(aluno.getId()));
                     alunoRepository.delete(aluno);
+                    realtimeEventPublisher.gestor("ALUNO_DELETADO", "ALUNO", aluno.getId());
+                    realtimeEventPublisher.turma(turmaId, "ALUNO_DELETADO");
                 });
                 response.getAlunos().getDeletadas().add(new OfflineSyncMapDTO(dto.getClientId(), dto.getServerId()));
             } catch (Exception e) {
@@ -292,6 +336,7 @@ public class OfflineSyncService {
         for (OfflineDisciplinaCriarDTO dto : safeList(request.getDisciplinas().getCriar())) {
             try {
                 validar(dto.getClientId() != null, "clientId da disciplina e obrigatorio");
+                boolean jaExistia = disciplinaRepository.findByClientId(dto.getClientId()).isPresent();
                 Disciplina disciplina = disciplinaRepository.findByClientId(dto.getClientId()).orElseGet(() -> {
                     Disciplina nova = Disciplina.builder()
                             .clientId(dto.getClientId())
@@ -304,6 +349,9 @@ public class OfflineSyncService {
                     return disciplinaRepository.save(nova);
                 });
                 response.getDisciplinas().getCriadas().add(new OfflineSyncMapDTO(dto.getClientId(), disciplina.getId()));
+                if (!jaExistia) {
+                    publicarEventoDisciplina(disciplina, "DISCIPLINA_CRIADA");
+                }
             } catch (Exception e) {
                 response.getErros().add(erro(dto.getClientId(), "DISCIPLINA_CRIAR", e));
             }
@@ -334,6 +382,7 @@ public class OfflineSyncService {
 
                 disciplinaRepository.save(disciplina);
                 response.getDisciplinas().getEditadas().add(new OfflineSyncMapDTO(dto.getClientId(), disciplina.getId()));
+                publicarEventoDisciplina(disciplina, "DISCIPLINA_ATUALIZADA");
             } catch (Exception e) {
                 response.getErros().add(erro(dto.getClientId(), "DISCIPLINA_EDITAR", e));
             }
@@ -348,6 +397,7 @@ public class OfflineSyncService {
                 disciplinaRepository.findById(dto.getServerId()).ifPresent(disciplina -> {
                     disciplina.setAtiva(false);
                     disciplinaRepository.save(disciplina);
+                    publicarEventoDisciplina(disciplina, "DISCIPLINA_DELETADA");
                 });
                 response.getDisciplinas().getDeletadas().add(new OfflineSyncMapDTO(dto.getClientId(), dto.getServerId()));
             } catch (Exception e) {
@@ -411,7 +461,9 @@ public class OfflineSyncService {
                     .dataHora(dto.getDataHoraLocal() != null ? dto.getDataHoraLocal().toLocalDateTime() : LocalDateTime.now())
                     .ativa(true)
                     .build();
-            return aulaRepository.save(aula);
+            Aula salva = aulaRepository.save(aula);
+            publicarEventoAula(salva, "AULA_INICIADA");
+            return salva;
         });
     }
 
@@ -443,7 +495,9 @@ public class OfflineSyncService {
                 .dataHora(dto.getDataHoraLocal() != null ? dto.getDataHoraLocal().toLocalDateTime() : LocalDateTime.now())
                 .build();
 
-        return presencaRepository.save(presenca);
+        Presenca salva = presencaRepository.save(presenca);
+        publicarEventoPresenca(salva, "PRESENCA");
+        return salva;
     }
 
     private Aula resolverAula(UUID aulaId, UUID aulaClientId, Map<UUID, Aula> aulasPorClientId) {
@@ -461,6 +515,70 @@ public class OfflineSyncService {
         }
 
         throw new RuntimeException("aulaId ou aulaClientId e obrigatorio");
+    }
+
+    private boolean temBlocosGestor(OfflineSyncRequestDTO request) {
+        return temOperacoes(request.getTurmas())
+                || temOperacoes(request.getProfessores())
+                || temOperacoes(request.getAlunos())
+                || temOperacoes(request.getDisciplinas());
+    }
+
+    private boolean temOperacoes(OfflineTurmasSyncDTO dto) {
+        return dto != null && (!safeList(dto.getCriar()).isEmpty()
+                || !safeList(dto.getEditar()).isEmpty()
+                || !safeList(dto.getDeletar()).isEmpty());
+    }
+
+    private boolean temOperacoes(OfflineProfessoresSyncDTO dto) {
+        return dto != null && (!safeList(dto.getCriar()).isEmpty()
+                || !safeList(dto.getEditar()).isEmpty()
+                || !safeList(dto.getDeletar()).isEmpty());
+    }
+
+    private boolean temOperacoes(OfflineAlunosSyncDTO dto) {
+        return dto != null && (!safeList(dto.getCriar()).isEmpty()
+                || !safeList(dto.getEditar()).isEmpty()
+                || !safeList(dto.getDeletar()).isEmpty());
+    }
+
+    private boolean temOperacoes(OfflineDisciplinasSyncDTO dto) {
+        return dto != null && (!safeList(dto.getCriar()).isEmpty()
+                || !safeList(dto.getEditar()).isEmpty()
+                || !safeList(dto.getDeletar()).isEmpty());
+    }
+
+    private void publicarEventoAula(Aula aula, String tipo) {
+        if (aula.getDisciplina() != null) {
+            realtimeEventPublisher.disciplina(aula.getDisciplina().getId(), tipo);
+            if (aula.getDisciplina().getTurma() != null) {
+                realtimeEventPublisher.turma(aula.getDisciplina().getTurma().getId(), tipo);
+            }
+        }
+    }
+
+    private void publicarEventoPresenca(Presenca presenca, String tipo) {
+        if (presenca.getDisciplina() != null) {
+            realtimeEventPublisher.disciplina(presenca.getDisciplina().getId(), tipo);
+        }
+        if (presenca.getAluno() != null) {
+            realtimeEventPublisher.aluno(presenca.getAluno().getId(), tipo);
+        }
+    }
+
+    private void publicarEventoAluno(Aluno aluno, String tipo) {
+        realtimeEventPublisher.gestor(tipo, "ALUNO", aluno.getId());
+        if (aluno.getTurma() != null) {
+            realtimeEventPublisher.turma(aluno.getTurma().getId(), tipo);
+        }
+    }
+
+    private void publicarEventoDisciplina(Disciplina disciplina, String tipo) {
+        realtimeEventPublisher.gestor(tipo, "DISCIPLINA", disciplina.getId());
+        realtimeEventPublisher.disciplina(disciplina.getId(), tipo);
+        if (disciplina.getTurma() != null) {
+            realtimeEventPublisher.turma(disciplina.getTurma().getId(), tipo);
+        }
     }
 
     private void validar(boolean condicao, String mensagem) {

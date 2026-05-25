@@ -11,6 +11,7 @@ import com.unicheck.Unicheckapi.model.Usuario;
 import com.unicheck.Unicheckapi.repository.AlunoRepository;
 import com.unicheck.Unicheckapi.repository.DisciplinaRepository;
 import com.unicheck.Unicheckapi.repository.UsuarioRepository;
+import com.unicheck.Unicheckapi.ws.RealtimeEventPublisher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -29,6 +30,7 @@ public class DisciplinaService {
     private final AlunoRepository alunoRepository;
     private final ProfessorService professorService;
     private final TurmaService turmaService;
+    private final RealtimeEventPublisher realtimeEventPublisher;
 
     public Disciplina criar(DisciplinaRequestDTO dto) {
         Professor professor = professorService.buscarPorId(dto.getProfessorId());
@@ -47,7 +49,9 @@ public class DisciplinaService {
                 .professor(professor)
                 .build();
 
-        return disciplinaRepository.save(disciplina);
+        Disciplina salva = disciplinaRepository.save(disciplina);
+        publicarEventoDisciplina(salva, "DISCIPLINA_CRIADA");
+        return salva;
     }
 
     public List<Disciplina> criarEmLote(DisciplinaBulkRequestDTO dto) {
@@ -161,13 +165,16 @@ public class DisciplinaService {
         disciplina.setTurma(turma);
         disciplina.setProfessor(professor);
 
-        return disciplinaRepository.save(disciplina);
+        Disciplina salva = disciplinaRepository.save(disciplina);
+        publicarEventoDisciplina(salva, "DISCIPLINA_ATUALIZADA");
+        return salva;
     }
 
     public void deletar(UUID id) {
         Disciplina disciplina = buscarPorId(id);
         disciplina.setAtiva(false);
         disciplinaRepository.save(disciplina);
+        publicarEventoDisciplina(disciplina, "DISCIPLINA_DELETADA");
     }
 
     public List<Disciplina> listar(){
@@ -216,6 +223,14 @@ public class DisciplinaService {
 
     public List<Disciplina> listarPorProfessorPermitido(UUID professorId) {
         return listarPorProfessor(professorId);
+    }
+
+    private void publicarEventoDisciplina(Disciplina disciplina, String tipo) {
+        realtimeEventPublisher.gestor(tipo, "DISCIPLINA", disciplina.getId());
+        realtimeEventPublisher.disciplina(disciplina.getId(), tipo);
+        if (disciplina.getTurma() != null) {
+            realtimeEventPublisher.turma(disciplina.getTurma().getId(), tipo);
+        }
     }
 }
 

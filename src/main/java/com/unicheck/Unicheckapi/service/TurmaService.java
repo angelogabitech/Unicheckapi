@@ -6,6 +6,7 @@ import com.unicheck.Unicheckapi.model.Turma;
 import com.unicheck.Unicheckapi.repository.AlunoRepository;
 import com.unicheck.Unicheckapi.repository.DisciplinaRepository;
 import com.unicheck.Unicheckapi.repository.TurmaRepository;
+import com.unicheck.Unicheckapi.ws.RealtimeEventPublisher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,9 +20,13 @@ public class TurmaService {
     private final TurmaRepository turmaRepository;
     private final AlunoRepository alunoRepository;
     private final DisciplinaRepository disciplinaRepository;
+    private final RealtimeEventPublisher realtimeEventPublisher;
 
     public Turma criar(Turma turma) {
-        return turmaRepository.save(turma);
+        Turma salva = turmaRepository.save(turma);
+        realtimeEventPublisher.gestor("TURMA_CRIADA", "TURMA", salva.getId());
+        realtimeEventPublisher.turma(salva.getId(), "TURMA_CRIADA");
+        return salva;
     }
 
     public List<Turma> listar() {
@@ -38,7 +43,10 @@ public class TurmaService {
         turma.setPeriodo(dados.getPeriodo());
         turma.setCurso(dados.getCurso());
         turma.setIdentificacao(dados.getIdentificacao());
-        return turmaRepository.save(turma);
+        Turma salva = turmaRepository.save(turma);
+        realtimeEventPublisher.gestor("TURMA_ATUALIZADA", "TURMA", salva.getId());
+        realtimeEventPublisher.turma(salva.getId(), "TURMA_ATUALIZADA");
+        return salva;
     }
 
     public void deletar(UUID id) {
@@ -53,5 +61,7 @@ public class TurmaService {
         disciplinaRepository.saveAll(disciplinas);
 
         turmaRepository.delete(turma);
+        realtimeEventPublisher.gestor("TURMA_DELETADA", "TURMA", id);
+        realtimeEventPublisher.turma(id, "TURMA_DELETADA");
     }
 }
