@@ -11,6 +11,7 @@ import com.unicheck.Unicheckapi.repository.AlunoRepository;
 import com.unicheck.Unicheckapi.repository.DisciplinaRepository;
 import com.unicheck.Unicheckapi.repository.MatriculaRepository;
 import com.unicheck.Unicheckapi.repository.PresencaRepository;
+import com.unicheck.Unicheckapi.ws.RealtimeEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ public class AlunoService {
     private final DisciplinaService disciplinaService;
     private final TurmaService turmaService;
     private final PasswordEncoder passwordEncoder;
+    private final RealtimeEventPublisher realtimeEventPublisher;
 
 
     public Aluno salvar(Aluno aluno) {
@@ -79,7 +81,9 @@ public class AlunoService {
         aluno.setMatricula(dto.getMatricula());
         aluno.setTurma(turma);
         aluno.setRole(Role.ALUNO);
-        return alunoRepository.save(aluno);
+        Aluno salvo = alunoRepository.save(aluno);
+        publicarEventoAluno(salvo, "ALUNO_CRIADO");
+        return salvo;
     }
 
     public Aluno atualizar(UUID id, AlunoRequestDTO dto) {
@@ -93,16 +97,21 @@ public class AlunoService {
         if (dto.getTurmaId() != null) {
             aluno.setTurma(turmaService.buscarPorId(dto.getTurmaId()));
         }
-        return alunoRepository.save(aluno);
+        Aluno salvo = alunoRepository.save(aluno);
+        publicarEventoAluno(salvo, "ALUNO_ATUALIZADO");
+        return salvo;
     }
 
     public void deletar(UUID id) {
         Aluno aluno = buscarPorId(id);
+        UUID turmaId = aluno.getTurma() != null ? aluno.getTurma().getId() : null;
 
         presencaRepository.deleteAll(presencaRepository.findByAlunoId(id));
         matriculaRepository.deleteAll(matriculaRepository.findByAlunoId(id));
 
         alunoRepository.delete(aluno);
+        realtimeEventPublisher.gestor("ALUNO_DELETADO", "ALUNO", id);
+        realtimeEventPublisher.turma(turmaId, "ALUNO_DELETADO");
     }
 
     public Aluno atualizarPerfil(UUID id, AtualizarPerfilDTO dto) {
@@ -119,6 +128,13 @@ public class AlunoService {
         Aluno aluno = buscarPorId(id);
         aluno.setFotoUrl(fotoBase64);
         alunoRepository.save(aluno);
+    }
+
+    private void publicarEventoAluno(Aluno aluno, String tipo) {
+        realtimeEventPublisher.gestor(tipo, "ALUNO", aluno.getId());
+        if (aluno.getTurma() != null) {
+            realtimeEventPublisher.turma(aluno.getTurma().getId(), tipo);
+        }
     }
 }
 

@@ -44,7 +44,7 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers("/auth/**", "/ws-native", "/ws-native/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
 
                         // Apenas GESTOR pode gerenciar usuÃ¡rios, turmas e disciplinas
                         .requestMatchers(HttpMethod.GET, "/disciplinas").hasRole("GESTOR")
