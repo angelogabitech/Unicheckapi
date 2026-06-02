@@ -2,11 +2,10 @@ HELP.md
 target/
 !**/src/main/**/target/
 !**/src/test/**/target/
-FaltaApi*.md
-alteracoes.md
+
 .tools
 .env
-ultimofaltaapi.md
+estudoapi.md
 
 ### STS ###
 .apt_generated
