@@ -4,6 +4,8 @@ import com.unicheck.Unicheckapi.ws.dto.RealtimeEventDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -32,6 +34,12 @@ public class RealtimeEventPublisher {
         }
     }
 
+    public void professor(UUID id, String tipo) {
+        if (id != null) {
+            enviar("/topic/professor/" + id, evento(tipo, "PROFESSOR", id));
+        }
+    }
+
     public void gestor(String tipo, String entidade) {
         gestor(tipo, entidade, null);
     }
@@ -45,6 +53,20 @@ public class RealtimeEventPublisher {
     }
 
     private void enviar(String destino, RealtimeEventDTO evento) {
+        if (TransactionSynchronizationManager.isSynchronizationActive()) {
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+                @Override
+                public void afterCommit() {
+                    doSend(destino, evento);
+                }
+            });
+            return;
+        }
+
+        doSend(destino, evento);
+    }
+
+    private void doSend(String destino, RealtimeEventDTO evento) {
         try {
             messagingTemplate.convertAndSend(destino, evento);
         } catch (Exception ignored) {
