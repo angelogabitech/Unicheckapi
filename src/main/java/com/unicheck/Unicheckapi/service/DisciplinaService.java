@@ -146,6 +146,7 @@ public class DisciplinaService {
 
     public Disciplina atualizar(UUID id, DisciplinaRequestDTO dto) {
         Disciplina disciplina = buscarPorId(id);
+        UUID professorAnteriorId = disciplina.getProfessor() != null ? disciplina.getProfessor().getId() : null;
         Professor professor = professorService.buscarPorId(dto.getProfessorId());
         Turma turma = turmaService.buscarPorId(dto.getTurmaId());
 
@@ -167,6 +168,9 @@ public class DisciplinaService {
 
         Disciplina salva = disciplinaRepository.save(disciplina);
         publicarEventoDisciplina(salva, "DISCIPLINA_ATUALIZADA");
+        if (professorAnteriorId != null && !professorAnteriorId.equals(professor.getId())) {
+            realtimeEventPublisher.professor(professorAnteriorId, "DISCIPLINA_ATUALIZADA");
+        }
         return salva;
     }
 
@@ -228,6 +232,9 @@ public class DisciplinaService {
     private void publicarEventoDisciplina(Disciplina disciplina, String tipo) {
         realtimeEventPublisher.gestor(tipo, "DISCIPLINA", disciplina.getId());
         realtimeEventPublisher.disciplina(disciplina.getId(), tipo);
+        if (disciplina.getProfessor() != null) {
+            realtimeEventPublisher.professor(disciplina.getProfessor().getId(), tipo);
+        }
         if (disciplina.getTurma() != null) {
             realtimeEventPublisher.turma(disciplina.getTurma().getId(), tipo);
         }
