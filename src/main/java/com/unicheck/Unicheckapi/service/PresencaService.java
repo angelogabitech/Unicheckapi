@@ -123,6 +123,7 @@ public class PresencaService {
                     .nomeTurma(possuiTurma ? d.getTurma().getIdentificacao() : "Sem turma")
                     .nomeProfessor(d.getProfessor() != null ? d.getProfessor().getNome() : null)
                     .totalAlunos(totalAlunos)
+                    .totalAulas(totalAulas)
                     .totalPresencas(totalPresencas)
                     .totalFaltas(Math.max(0, totalFaltas))
                     .percentualPresenca(percentual)

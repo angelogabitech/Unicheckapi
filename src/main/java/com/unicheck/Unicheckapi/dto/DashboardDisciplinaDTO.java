@@ -15,6 +15,7 @@ public class DashboardDisciplinaDTO {
     private String nomeTurma;
     private String nomeProfessor;
     private long totalAlunos;
+    private long totalAulas;
     private long totalPresencas;
     private long totalFaltas;
     private double percentualPresenca;
